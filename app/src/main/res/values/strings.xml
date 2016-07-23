@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Popular Movies</string>
+    <string name="api_key">9670f832a44b2eed897026d308f3c692</string>
+    <string name="settings">Settings</string>
+    <string name="order_pref_key">order</string>
+    <string name="order_pref_default">top_rated</string>
+</resources>
