@@ -18,7 +18,7 @@ public class MyListItem {
 	}
 	public static MyListItem fromCursor(Cursor cursor) {
 		MyListItem myListItem = new MyListItem();
-		myListItem.setLink("http://image.tmdb.org/t/p/w342/"+cursor.getString(cursor.getColumnIndexOrThrow(MovieColumns.POSTER)));
+		myListItem.setLink("http://image.tmdb.org/t/p/w185/"+cursor.getString(cursor.getColumnIndexOrThrow(MovieColumns.POSTER)));
 		return myListItem;
 	}
 }

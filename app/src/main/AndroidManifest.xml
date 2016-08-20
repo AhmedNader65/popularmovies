@@ -24,10 +24,17 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity android:name=".DetailActivity">
+        <activity android:name=".DetailActivity"
+            android:label="Movie details"
+                  android:parentActivityName=".MainActivity"
+            >
 
         </activity>
-        <activity android:name=".SettingsActivity"/>
+        <activity
+            android:theme="@style/SettingsTheme"
+            android:label="Settings"
+            android:parentActivityName=".MainActivity"
+            android:name=".SettingsActivity"/>
         <provider
             android:authorities="mrerror.popularmovies.data.MoviesProvider"
             android:name="mrerror.popularmovies.data.generated.MoviesProvider"

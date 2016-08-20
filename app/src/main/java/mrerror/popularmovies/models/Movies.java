@@ -1,5 +1,7 @@
 package mrerror.popularmovies.models;
 
+import java.util.ArrayList;
+
 /**
  * Created by ahmed on 19/07/16.
  */
@@ -10,9 +12,36 @@ public class Movies {
 	private String synopsis;
 	private String rating;
 	private String date ;
+	private String isFav ;
+	private ArrayList<Trailer> trailers;
+	private ArrayList<Review> reviews;
 
 	public int getMovie_id() {
 		return movie_id;
+	}
+
+	public String getIsFav() {
+		return isFav;
+	}
+
+	public void setIsFav(String isFav) {
+		this.isFav = isFav;
+	}
+
+	public ArrayList<Trailer> getTrailers() {
+		return trailers;
+	}
+
+	public void setTrailers(ArrayList<Trailer> trailers) {
+		this.trailers = trailers;
+	}
+
+	public ArrayList<Review> getReviews() {
+		return reviews;
+	}
+
+	public void setReviews(ArrayList<Review> reviews) {
+		this.reviews = reviews;
 	}
 
 	public void setMovie_id(int movie_id) {

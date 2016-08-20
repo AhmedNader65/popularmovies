@@ -39,4 +39,5 @@ public interface MovieColumns {
 	@DataType(INTEGER) @NotNull
 	String MOVIE_ID = "movie_id";
 
+
 }

@@ -3,9 +3,11 @@
     <string-array name="order">
         <item>Most popular</item>
         <item>High rated</item>
+        <item>Favorites</item>
     </string-array>
     <string-array name="order_value">
         <item>popular</item>
         <item>top_rated</item>
+        <item>favorites</item>
     </string-array>
 </resources>

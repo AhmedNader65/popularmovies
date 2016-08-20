@@ -20,6 +20,7 @@ public final class MoviesDataBase {
 	private MoviesDataBase(){}
 	public static final int VERSION = 1;
 	@Table(MovieColumns.class) public static final String Movies = "movies";
+	@Table(MovieColumns.class) public static final String FavMovies = "fav_movies";
 
 	@OnCreate
 	public static void onCreate(Context context, SQLiteDatabase db) {

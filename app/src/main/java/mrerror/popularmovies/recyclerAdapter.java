@@ -1,7 +1,6 @@
 package mrerror.popularmovies;
 
 import android.content.Context;
-import android.content.Intent;
 import android.database.Cursor;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -15,6 +14,9 @@ import com.bumptech.glide.Glide;
  * Created by ahmed on 19/07/16.
  */
 public class recyclerAdapter  extends CursorRecyclerViewAdapter<recyclerAdapter.ViewHolder>{
+	public interface OnItemClick{
+		public void OnItemClicked(Long movieId);
+	}
 	static Context mContext;
 	public recyclerAdapter(Context context,Cursor cursor){
 		super(context,cursor);
@@ -40,12 +42,11 @@ public class recyclerAdapter  extends CursorRecyclerViewAdapter<recyclerAdapter.
 		@Override
 		public void onClick(View view) {
 			cursor.moveToPosition(getPosition());
-					Intent intent = new Intent(mContext, DetailActivity.class)
-//							.setData(WeatherContract.WeatherEntry.buildWeatherLocationWithDate(
-//									locationSetting, cursor.getLong(COL_WEATHER_DATE)
-//							));
-			.putExtra("id",cursor.getLong(MoviesFragment.COL_MOVIE_ID));
-					mContext.startActivity(intent);
+//					Intent intent = new Intent(mContext, DetailActivity.class)
+//			.putExtra("id",cursor.getLong(MoviesFragment.COL_MOVIE_ID));
+//					mContext.startActivity(intent);
+			((OnItemClick)mContext).OnItemClicked(cursor.getLong(MoviesFragment.COL_MOVIE_ID));
+			MoviesFragment.mPosition=(getPosition());
 		}
 	}
 

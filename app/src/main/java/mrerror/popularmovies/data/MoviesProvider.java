@@ -19,6 +19,7 @@ public class MoviesProvider {
 
 		interface Path {
 			String Movies = "movies";
+			String Favorites = "favorites";
 		}
 
 		private static Uri buildUri(String... paths) {
@@ -41,10 +42,30 @@ public class MoviesProvider {
 					path = Path.Movies + "/#",
 					name = "MOVIE_ID",
 					type = "vnd.android.cursor.item/movies",
-					whereColumn = MovieColumns._ID,
+					whereColumn = MovieColumns.MOVIE_ID,
 					pathSegment = 1)
 			public static Uri withId(long id) {
 				return buildUri(Path.Movies, String.valueOf(id));
+			}
+
+		}
+
+@TableEndpoint(table = MoviesDataBase.FavMovies) public static class Favorites {
+
+			@ContentUri(
+					path = Path.Favorites,
+					type = "vnd.android.cursor.dir/movies",
+					defaultSort = MovieColumns._ID + " ASC")
+			public static final Uri CONTENT_URI = buildUri(Path.Favorites);
+
+			@InexactContentUri(
+					path = Path.Favorites + "/#",
+					name = "MOVIE_ID",
+					type = "vnd.android.cursor.item/movies",
+					whereColumn = MovieColumns.MOVIE_ID,
+					pathSegment = 1)
+			public static Uri withId(long id) {
+				return buildUri(Path.Favorites, String.valueOf(id));
 			}
 
 		}

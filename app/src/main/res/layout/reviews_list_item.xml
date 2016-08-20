@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:gravity="center_vertical"
+              android:layout_width="wrap_content"
+              android:padding="8dp"
+              android:layout_height="wrap_content">
+    <mrerror.popularmovies.customfonts.TextViewSubtitle
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Ahmed Mohamed"
+        android:textSize="22sp"
+        android:id="@+id/reviewAuthor"
+        />
+    <mrerror.popularmovies.customfonts.TextViewContent
+        android:paddingLeft="16dp"
+        android:id="@+id/reviewContent"
+        android:text="gfdgfdge yeytytr "
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+</LinearLayout>

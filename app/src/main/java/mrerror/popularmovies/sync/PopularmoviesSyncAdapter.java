@@ -33,10 +33,12 @@ import mrerror.popularmovies.data.MovieColumns;
 import mrerror.popularmovies.data.MoviesProvider;
 import mrerror.popularmovies.models.Movies;
 import mrerror.popularmovies.models.MySingleton;
+import mrerror.popularmovies.models.Review;
+import mrerror.popularmovies.models.Trailer;
 
 public class PopularmoviesSyncAdapter extends AbstractThreadedSyncAdapter {
     public final String LOG_TAG = PopularmoviesSyncAdapter.class.getSimpleName();
-    private ArrayList<Movies> movies;
+    public static ArrayList<Movies> movies;
     // Interval at which to sync with the weather, in milliseconds.
 // 60 seconds (1 minute)  180 = 3 hours
     public static final int SYNC_INTERVAL = 60*180;
@@ -45,52 +47,53 @@ public class PopularmoviesSyncAdapter extends AbstractThreadedSyncAdapter {
         super(context, autoInitialize);
     }
     int pos ;
+    ArrayList<Trailer> videos;
+    ArrayList<Review> reviews;
     @Override
     public void onPerformSync(Account account, Bundle extras, String authority, ContentProviderClient provider, SyncResult syncResult) {
         Log.d(LOG_TAG, "onPerformSync Called.");
         String orderQuiery = Utility.getOrder(getContext());
+        if(!orderQuiery.equals("favorites")) {
+            // These two need to be declared outside the try/catch
+            // so that they can be closed in the finally block.
+            Uri.Builder uri = Uri.parse("https://api.themoviedb.org/3/movie/" + orderQuiery + "?api_key=" + getContext().getString(R.string.api_key)).buildUpon();
+            Log.v(LOG_TAG, uri.toString());
+            final JsonObjectRequest jsObjRequest = new JsonObjectRequest
+                    (Request.Method.GET, uri.toString(), null, new Response.Listener<JSONObject>() {
 
-        // These two need to be declared outside the try/catch
-        // so that they can be closed in the finally block.
-        Uri.Builder uri = Uri.parse("https://api.themoviedb.org/3/movie/"+orderQuiery+"?api_key="+getContext().getString(R.string.api_key)).buildUpon();
-        Log.v(LOG_TAG,uri.toString());
-        final JsonObjectRequest jsObjRequest = new JsonObjectRequest
-                (Request.Method.GET, uri.toString(), null, new Response.Listener<JSONObject>() {
-
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        Log.v(LOG_TAG,response.toString());
-                        try {
-                            movies = new ArrayList<>();
-                            String title,thumbnail, synopsis,rating,date ;
-                            JSONArray jsonArray = response.getJSONArray("results");
-                            for(int i = 0 ; i < jsonArray.length();i++){
-                                pos = i;
-                                JSONObject movieObj = jsonArray.getJSONObject(i);
-                                title = movieObj.getString("title");
-                                thumbnail = movieObj.getString("poster_path");
-                                synopsis = movieObj.getString("overview");
-                                rating = movieObj.getString("vote_average");
-                                date = movieObj.getString("release_date");
-                                final int id = movieObj.getInt("id");
-                                addMovie(id,title,thumbnail,synopsis,rating,date);
+                        @Override
+                        public void onResponse(JSONObject response) {
+                            Log.v(LOG_TAG, response.toString());
+                            try {
+                                movies = new ArrayList<>();
+                                JSONArray jsonArray = response.getJSONArray("results");
+                                for (int i = 0; i < jsonArray.length(); i++) {
+                                    pos = i;
+                                    JSONObject movieObj = jsonArray.getJSONObject(i);
+                                    final String title = movieObj.getString("title");
+                                    final String thumbnail = movieObj.getString("poster_path");
+                                    final String synopsis = movieObj.getString("overview");
+                                    final String  rating = movieObj.getString("vote_average");
+                                    final String date = movieObj.getString("release_date");
+                                     int id = movieObj.getInt("id");
+                                    addMovie(id, title, thumbnail, synopsis, rating, date);
+                                    deleteData();
+                                    insertData();
+                                }
+                            } catch (JSONException e) {
+                                e.printStackTrace();
                             }
-                            deleteData();
-
-                            insertData();
-                        } catch (JSONException e) {
-                            e.printStackTrace();
                         }
-                    }
-                }, new Response.ErrorListener() {
+                    }, new Response.ErrorListener() {
 
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Log.v(LOG_TAG,error.toString());
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            Log.v(LOG_TAG, error.toString());
 
-                    }
-                });
-        MySingleton.getInstance(getContext()).addToRequestQueue(jsObjRequest);
+                        }
+                    });
+            MySingleton.getInstance(getContext()).addToRequestQueue(jsObjRequest);
+        }
     }
     private void addMovie(int movieId,String title, String thumbnail, String synopsis, String rating, String date){
         Movies newMovie = new Movies();
@@ -107,7 +110,6 @@ public class PopularmoviesSyncAdapter extends AbstractThreadedSyncAdapter {
         ArrayList<ContentProviderOperation> batchOperations = new ArrayList<>(movies.size());
 
         for (Movies movie : movies){
-            Log.d(LOG_TAG, "insert3");
             ContentProviderOperation.Builder builder = ContentProviderOperation.newInsert(
                     MoviesProvider.Movies.CONTENT_URI);
             builder.withValue(MovieColumns.TITLE, movie.getTitle());
