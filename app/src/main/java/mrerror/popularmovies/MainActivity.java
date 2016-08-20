@@ -6,6 +6,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import mrerror.popularmovies.sync.PopularmoviesSyncAdapter;
+
 public class MainActivity extends AppCompatActivity {
 
 	@Override
@@ -17,6 +19,8 @@ public class MainActivity extends AppCompatActivity {
 					.add(R.id.container, new MoviesFragment())
 					.commit();
 		}
+
+		PopularmoviesSyncAdapter.initializeSyncAdapter(this);
 	}
 
 	@Override

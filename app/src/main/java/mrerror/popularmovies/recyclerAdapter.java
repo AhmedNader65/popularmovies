@@ -2,72 +2,64 @@ package mrerror.popularmovies;
 
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
-import com.squareup.picasso.Picasso;
-
-import java.util.ArrayList;
-
-import mrerror.popularmovies.models.Movies;
+import com.bumptech.glide.Glide;
 
 /**
  * Created by ahmed on 19/07/16.
  */
-public class recyclerAdapter extends RecyclerView.Adapter<recyclerAdapter.myViewHolder>  {
-	Context mContext ;
-	LayoutInflater inflater;
-	ArrayList<Movies> mMovies ;
-	public recyclerAdapter(Context context, ArrayList<Movies> movies){
+public class recyclerAdapter  extends CursorRecyclerViewAdapter<recyclerAdapter.ViewHolder>{
+	static Context mContext;
+	public recyclerAdapter(Context context,Cursor cursor){
+		super(context,cursor);
 		this.mContext = context;
-		this.inflater = LayoutInflater.from(context);
-		this.mMovies = movies;
-	}
-	@Override
-	public recyclerAdapter.myViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-		View v = inflater.inflate(R.layout.cardview,parent,false);
-		myViewHolder holder = new myViewHolder(v);
-		return holder;
 	}
 
-	@Override
-	public void onBindViewHolder(recyclerAdapter.myViewHolder holder, int position) {
-		Movies movie = mMovies.get(position);
-		holder.setData(movie);
-	}
+	public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+		public ImageView mImageView;
+		Cursor cursor;
+		public ViewHolder(View view) {
+			super(view);
+			view.setOnClickListener(this);
+			mImageView = (ImageView) view.findViewById(R.id.movie_img);
+		}
+		public void setData(Cursor cursor) {
+			this.cursor = cursor;
+			final MyListItem myListItem = MyListItem.fromCursor(cursor);
+//			Picasso.with(mContext).load(myListItem.getLink())
+//					.networkPolicy(NetworkPolicy.OFFLINE).into(mImageView);
+			Glide.with(mContext).load(myListItem.getLink()).into(mImageView);
+		}
 
-	@Override
-	public int getItemCount() {
-		return mMovies.size();
-	}
-	class myViewHolder extends RecyclerView.ViewHolder {
-		ImageView img;
-		public myViewHolder(View itemView) {
-			super(itemView);
-			img= (ImageView)itemView.findViewById(R.id.movie_img);
-			img.setOnClickListener(new View.OnClickListener() {
-				@Override
-				public void onClick(View view) {
-					Intent intent = new Intent(mContext,DetailActivity.class);
-					intent.putExtra("title",mMovies.get(getPosition()).getTitle());
-					intent.putExtra("thumbnail",mMovies.get(getPosition()).getThumbnail());
-					intent.putExtra("date",mMovies.get(getPosition()).getDate());
-					intent.putExtra("rating",mMovies.get(getPosition()).getRating());
-					intent.putExtra("overview",mMovies.get(getPosition()).getSynopsis());
-					Log.v("hiiiiiiiiii",mMovies.get(getPosition()).getDate());
+		@Override
+		public void onClick(View view) {
+			cursor.moveToPosition(getPosition());
+					Intent intent = new Intent(mContext, DetailActivity.class)
+//							.setData(WeatherContract.WeatherEntry.buildWeatherLocationWithDate(
+//									locationSetting, cursor.getLong(COL_WEATHER_DATE)
+//							));
+			.putExtra("id",cursor.getLong(MoviesFragment.COL_MOVIE_ID));
 					mContext.startActivity(intent);
-				}
-			});
-
 		}
-		public void setData(Movies obj){
-			String link = "http://image.tmdb.org/t/p/w500/"+obj.getThumbnail();
+	}
 
-			Picasso.with(mContext).load(link).into(img);
-		}
+	@Override
+	public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+		View itemView = LayoutInflater.from(parent.getContext())
+				.inflate(R.layout.cardview, parent, false);
+		ViewHolder vh = new ViewHolder(itemView);
+		return vh;
+	}
+
+	@Override
+	public void onBindViewHolder(ViewHolder viewHolder, Cursor cursor) {
+		viewHolder.setData(cursor);
 	}
 }
+
